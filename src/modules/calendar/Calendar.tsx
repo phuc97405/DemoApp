@@ -6,7 +6,6 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Alert,
   ToastAndroid,
 } from "react-native";
 import ModalNotion from "~components/modal/ModalNotion";
@@ -45,13 +44,11 @@ const CalendarScreen = () => {
       } else {
         result[date] = {
           dots: [{ key, color }],
-          // selected:true,
-          // selectedColor: "red",
         };
       }
     }
-    setDataCalendar(jsonObject);
     setObjectRender(result);
+    setDataCalendar(jsonObject);
   };
   const saveCalendar = async (data: any) => {
     let jsonString = "";
@@ -137,7 +134,6 @@ const CalendarScreen = () => {
         onDayPress={(value) => {
           setDateString(value?.dateString);
           showInfoDate(value?.dateString);
-          loadCalendar();
         }}
       />
       <View style={[styles.viewRow, { paddingHorizontal: 12, marginTop: 15 }]}>
@@ -170,7 +166,7 @@ const CalendarScreen = () => {
         onPressCancel={() => setIsVisible(false)}
         onPressOk={
           inputText && currentIdChoose.current
-            ? () => {
+            ? async () => {
                 setObjectRender({
                   ...objetRender,
                   [dateString]: {
@@ -187,9 +183,17 @@ const CalendarScreen = () => {
                     },
                   },
                 ]);
+                setInfo([
+                  ...getInfo,
+                  {
+                    key: inputText,
+                    color: listItemChoose[currentIdChoose.current!]?.color,
+                  },
+                ]);
+                // loadCalendar();
                 setIsVisible(false);
                 setInputText("");
-                currentIdChoose.current = undefined;
+                // currentIdChoose.current = undefined;
               }
             : () => {
                 ToastAndroid.show(
@@ -210,16 +214,11 @@ const CalendarScreen = () => {
                     key={index}
                     onPress={() => {
                       currentIdChoose.current = i.id;
-                      setItemChoose((preState) => {
-                        const newArr = [...preState];
-                        newArr.forEach((item, i) => {
-                          if (item !== i) {
-                            item.isCheck = false;
-                          }
-                        });
-                        newArr[index].isCheck = true;
-                        return newArr;
-                      });
+                      setItemChoose(
+                        listItemChoose.map((item) => {
+                          return { ...item, isCheck: i.id === item.id };
+                        })
+                      );
                     }}
                     style={[
                       i?.isCheck == true
