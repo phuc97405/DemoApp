@@ -46,6 +46,7 @@ export type ModalStackScreenProps<T extends keyof ModalStackParamList> =
 export type RootStackParamList = {
   public: NavigatorScreenParams<PublicStackParamList>;
   private: NavigatorScreenParams<PrivateStackParamList>;
+  calendar: undefined;
   modalLoading: NavigatorScreenParams<ModalStackParamList>;
 };
 

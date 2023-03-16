@@ -7,25 +7,27 @@ import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import ModalStack from "./modal-routes";
 import { appModel } from "../view-models/app-view-model";
 import { navigationRef } from "../services/navigation-services";
+import CalendarScreen from "../modules/calendar/Calendar";
 
 const navTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: 'transparent',
-    },
-  };
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "transparent",
+  },
+};
 const AppNavigator = () => {
   const isAuthenticated = appModel.authenticate.isAuthenticated;
-
 
   return (
     <NavigationContainer theme={navTheme} ref={navigationRef}>
       <RootStack.Navigator
+        initialRouteName="calendar"
         screenOptions={{
           headerShown: false,
         }}
       >
+        <RootStack.Screen name={"calendar"} component={CalendarScreen} />
         {isAuthenticated ? (
           <RootStack.Screen name={"private"} component={Private} />
         ) : (
@@ -33,9 +35,9 @@ const AppNavigator = () => {
         )}
         <RootStack.Group
           screenOptions={{
-            headerShown:false,
-            presentation: 'transparentModal',
-            gestureDirection: 'vertical',
+            headerShown: false,
+            presentation: "transparentModal",
+            gestureDirection: "vertical",
           }}
         >
           <RootStack.Screen component={ModalStack} name="modalLoading" />
