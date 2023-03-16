@@ -43,7 +43,11 @@ const CalendarScreen = () => {
       if (result[date]) {
         result[date].dots.push({ key, color });
       } else {
-        result[date] = { dots: [{ key, color }] };
+        result[date] = {
+          dots: [{ key, color }],
+          // selected:true,
+          // selectedColor: "red",
+        };
       }
     }
     setDataCalendar(jsonObject);
@@ -121,6 +125,7 @@ const CalendarScreen = () => {
         markingType={"multi-dot"}
         markedDates={{
           ...objetRender,
+          [dateString]: { dots: [], selected: true, selectedColor: "red" },
           // "2023-03-25": {
           //   dots: [vacation, massage, workout],
           //   // selected: true,
@@ -132,21 +137,7 @@ const CalendarScreen = () => {
         onDayPress={(value) => {
           setDateString(value?.dateString);
           showInfoDate(value?.dateString);
-          // setIsVisible(true);
-        }}
-        theme={{
-          backgroundColor: "red",
-          selectedDayBackgroundColor: "#00adf5",
-          indicatorColor: "blue",
-          selectedDotColor: "#00adf5",
-          todayTextColor: "#00adf5",
-          selectedDayTextColor: "red",
-          dayTextColor: "#2d4150",
-          calendarBackground: "#ffffff",
-          textSectionTitleColor: "#b6c1cd",
-          textSectionTitleDisabledColor: "#d9e1e8",
-          textDisabledColor: "#d9e1e8",
-          dotColor: "#00adf5",
+          loadCalendar();
         }}
       />
       <View style={[styles.viewRow, { paddingHorizontal: 12, marginTop: 15 }]}>
