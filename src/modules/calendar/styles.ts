@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
   txtInput: {
     backgroundColor: "#E0E0E0",
     borderRadius: 10,
-    paddingHorizontal: 12,
     flex: 1,
     marginHorizontal: 12,
+    padding: 12,
   },
   viewRow: {
     flexDirection: "row",

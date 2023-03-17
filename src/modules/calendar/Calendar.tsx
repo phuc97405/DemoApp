@@ -29,6 +29,22 @@ const CalendarScreen = () => {
   const [inputText, setInputText] = useState<string>("");
   const [objetRender, setObjectRender] = useState<{}>({});
   const [getInfo, setInfo] = useState<any>([]);
+  var get = require("lodash.get");
+
+  const getStatus = (color: string) => {
+    switch (color) {
+      case "green":
+        return "Stated";
+      case "yellow":
+        return "In Progress";
+      case "blue":
+        return "Finished";
+      case "red":
+        return "Canceled";
+      default:
+        return "Invalid Status";
+    }
+  };
 
   const loadCalendar = async () => {
     const jsonString = await AsyncStorage.getItem("demo-app");
@@ -47,8 +63,11 @@ const CalendarScreen = () => {
         };
       }
     }
+    console.log("setObjectRender: ", result);
+    console.log("setDataCalendar: ", jsonObject);
     setObjectRender(result);
     setDataCalendar(jsonObject);
+    ///tung dATE RA LUOON trung key
   };
   const saveCalendar = async (data: any) => {
     let jsonString = "";
@@ -77,30 +96,21 @@ const CalendarScreen = () => {
     setObjectRender(result);
   };
   const showInfoDate = (dateInfo: string) => {
-    let result: any = [];
-    for (const item of dataCalendar) {
-      const date = Object.keys(item)[0];
-      const color = item[date].color;
-      const key = item[date].key;
-
-      if (dateInfo === date) {
-        result.push({ key, color });
-      }
-    }
-    setInfo(result);
+    const dots = get(objetRender, `[${dateInfo}].dots`, []);
+    setInfo(dots || []);
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={styles.containerRow}>
-        {dateString && getInfo.length < 3 && (
-          <TouchableOpacity
-            onPress={() => setIsVisible(true)}
-            style={styles.btnCreate}
-          >
-            <Text style={styles.txtBtnCreate}>+</Text>
-          </TouchableOpacity>
-        )}
+        {/* {dateString && getInfo.length < 3 && ( */}
+        <TouchableOpacity
+          onPress={() => setIsVisible(true)}
+          style={styles.btnCreate}
+        >
+          <Text style={styles.txtBtnCreate}>+</Text>
+        </TouchableOpacity>
+        {/* )} */}
 
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
           {listNameSort.map((item, index) => (
@@ -123,6 +133,7 @@ const CalendarScreen = () => {
         markedDates={{
           ...objetRender,
           [dateString]: { dots: [], selected: true, selectedColor: "red" },
+
           // "2023-03-25": {
           //   dots: [vacation, massage, workout],
           //   // selected: true,
@@ -140,9 +151,9 @@ const CalendarScreen = () => {
         <Text style={styles.txtPopup}>DateTime: </Text>
         <Text style={styles.txtDateTime}>{dateString} </Text>
       </View>
-      {getInfo.map((item: any, index: any) => (
-        <>
-          <View style={{ paddingHorizontal: 12 }} key={index}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        {getInfo.map((item: any, index: any) => (
+          <View style={{ paddingHorizontal: 12, flex: 1 }} key={index}>
             <View style={styles.viewRow}>
               <Text style={styles.txtPopup}>Title: </Text>
               <Text style={styles.txtDateTime}>{item?.key} </Text>
@@ -150,9 +161,7 @@ const CalendarScreen = () => {
 
             <View style={styles.viewRow}>
               <Text style={styles.txtPopup}>Status: </Text>
-              <TouchableOpacity
-                style={[styles.tcb_Choose, { backgroundColor: item.color }]}
-              />
+              <Text style={styles.txtPopup}>{getStatus(item.color)}</Text>
             </View>
             {getInfo.length > 1 && (
               <View
@@ -160,8 +169,8 @@ const CalendarScreen = () => {
               />
             )}
           </View>
-        </>
-      ))}
+        ))}
+      </ScrollView>
       <ModalNotion
         onPressCancel={() => setIsVisible(false)}
         onPressOk={
@@ -190,6 +199,7 @@ const CalendarScreen = () => {
                     color: listItemChoose[currentIdChoose.current!]?.color,
                   },
                 ]);
+
                 // loadCalendar();
                 setIsVisible(false);
                 setInputText("");
@@ -207,7 +217,7 @@ const CalendarScreen = () => {
         children={
           <View style={{ marginVertical: 30 }}>
             <View style={styles.viewRow}>
-              <Text style={styles.txtPopup}>Status: </Text>
+              <Text style={styles.txtPopup}>Status:(*) </Text>
               {listItemChoose.map((i, index) =>
                 index > 0 ? (
                   <TouchableOpacity
@@ -233,11 +243,11 @@ const CalendarScreen = () => {
               )}
             </View>
             <View style={styles.viewRow}>
-              <Text style={styles.txtPopup}>DateTime: </Text>
+              <Text style={styles.txtPopup}>DateTime:(*) </Text>
               <Text style={styles.txtDateTime}>{dateString} </Text>
             </View>
             <View style={styles.viewRow}>
-              <Text style={styles.txtPopup}>Title: </Text>
+              <Text style={styles.txtPopup}>Title:(*) </Text>
               <TextInput
                 onChangeText={setInputText}
                 style={styles.txtInput}
